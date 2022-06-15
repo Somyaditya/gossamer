@@ -1,10 +1,4 @@
-/**
- *Submitted for verification at polygonscan.com on 2022-05-28
-*/
 
-/**
- *Submitted for verification at Etherscan.io on 2021-04-22
-*/
 
 // File: @openzeppelin/contracts/utils/Context.sol
 
@@ -299,7 +293,7 @@ abstract contract ERC165 is IERC165 {
      */
     mapping(bytes4 => bool) private _supportedInterfaces;
 
-    constructor () internal {
+    constructor ()  {
         // Derived contracts need only register support for their own interfaces,
         // we register support for ERC165 itself here
         _registerInterface(_INTERFACE_ID_ERC165);
@@ -1493,10 +1487,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata, IERC721Enumerable 
         }
         // If both are set, concatenate the baseURI and tokenURI (via abi.encodePacked).
         if (bytes(_tokenURI).length > 0) {
-            return string(abi.encodePacked(base, _tokenURI, ".json"));
+            return string(abi.encodePacked(base, _tokenURI));
         }
         // If there is a baseURI but no tokenURI, concatenate the tokenID to the baseURI.
-        return string(abi.encodePacked(base, tokenId.toString(), ".json"));
+        return string(abi.encodePacked(base, tokenId.toString()));
     }
 
     /**
@@ -1852,7 +1846,7 @@ abstract contract Ownable is Context {
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
-    constructor () internal {
+    constructor ()  {
         address msgSender = _msgSender();
         _owner = msgSender;
         emit OwnershipTransferred(address(0), msgSender);
@@ -1896,7 +1890,6 @@ abstract contract Ownable is Context {
     }
 }
 
-// File: contracts/BoredApeYachtClub.sol
 
 
 pragma solidity ^0.7.0;
@@ -1904,10 +1897,9 @@ pragma solidity ^0.7.0;
 
 
 /**
- * @title BoredApeYachtClub contract
  * @dev Extends ERC721 Non-Fungible Token Standard basic implementation
  */
-contract Gossamer is ERC721, Ownable {
+contract GossamerSeed is ERC721, Ownable {
     using SafeMath for uint256;
 
 
@@ -1916,8 +1908,9 @@ contract Gossamer is ERC721, Ownable {
     
     mapping(address=>uint256) public nftCounter;
 
-    constructor(string memory name, string memory symbol, uint256 maxNftSupply) ERC721(name, symbol) {
-        MAX_COLLECTION = maxNftSupply;
+    constructor() ERC721("Gossamer Seed", "SEED")  {
+        MAX_COLLECTION = 10000;
+        _setBaseURI("https://bron-nft.vercel.app/api/nft/");
     }
 
     function withdraw() public onlyOwner {
@@ -1938,12 +1931,12 @@ contract Gossamer is ERC721, Ownable {
     function mintNFTs(uint numberOfTokens) public  {
         require(totalSupply().add(numberOfTokens) <= MAX_COLLECTION, "Purchase would exceed max supply");
         uint256 pno = nftCounter[msg.sender];
-        require(pno+numberOfTokens<=5, "Max Minted can be only 5");
+        require(pno+numberOfTokens<=5, "Max Minted can only be 5");
         for(uint i = 0; i < numberOfTokens; i++) {
-            uint mintIndex = totalSupply();
+            uint mintIndex = totalSupply().add(1);
             if (totalSupply() < MAX_COLLECTION) {
                 _safeMint(msg.sender, mintIndex);
-                nftCounter[msg.sender] +=1;
+                nftCounter[msg.sender] += 1;
             }
         }
     }
