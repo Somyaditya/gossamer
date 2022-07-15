@@ -1906,12 +1906,11 @@ contract NightmareSerum is ERC721, Ownable {
     /* Mapping of address to boolean to keep record of wallets  */
     mapping(address=>uint256) public airdropDone;
     
-    struct airdropParam {
-        address wallet;
-        uint256 numberOfTokens;
-    }
 
-    constructor() ERC721("Nightmare Serum", "NSER")  {}
+    constructor() ERC721("Nightmare Serum", "NSER")  {
+        _setBaseURI("https://serum-api.gossamer.world/api/nft/");
+        MAX_COLLECTION = 6900;
+    }
 
 
     function withdraw() public onlyOwner {
@@ -1920,17 +1919,8 @@ contract NightmareSerum is ERC721, Ownable {
     }
 
     /* 
-    @dev set max collection
-    Can be set only once
-     */
-    function setMaxCollection(uint256 maxCollection) external onlyOwner{
-        require(MAX_COLLECTION == 0, "Max Collection Already Set");
-        MAX_COLLECTION = maxCollection;
-    }
-
-    /* 
     @dev checks if one wallet has recieved airdrop or not
-    @returns bool
+    @returns uint256
     @params wallet address
      */
     function checkAirdrop(address add) public view returns(uint256){
