@@ -1,4 +1,5 @@
 
+
 // File: @openzeppelin/contracts/utils/Context.sol
 
 // SPDX-License-Identifier: MIT
@@ -1837,6 +1838,7 @@ pragma solidity >=0.6.0 <0.8.0;
  * `onlyOwner`, which can be applied to your functions to restrict their use to
  * the owner.
  */
+ pragma abicoder v2;
 abstract contract Ownable is Context {
     address private _owner;
 
@@ -1902,7 +1904,12 @@ contract NightmareSerum is ERC721, Ownable {
     uint256 public MAX_COLLECTION;
 
     /* Mapping of address to boolean to keep record of wallets  */
-    mapping(address=>bool) public airdropDone;
+    mapping(address=>uint256) public airdropDone;
+    
+    struct airdropParam {
+        address wallet;
+        uint256 numberOfTokens;
+    }
 
     constructor() ERC721("Nightmare Serum", "NSER")  {}
 
@@ -1926,7 +1933,7 @@ contract NightmareSerum is ERC721, Ownable {
     @returns bool
     @params wallet address
      */
-    function checkAirdrop(address add) public view returns(bool){
+    function checkAirdrop(address add) public view returns(uint256){
         return airdropDone[add];
     }
 
@@ -1945,8 +1952,7 @@ contract NightmareSerum is ERC721, Ownable {
         require(totalSupply().add(numberOfTokens) <= MAX_COLLECTION, "Mint would exceed max supply");
         require(numberOfTokens!=0 && wallets.length == numberOfTokens, "Send correct address array");
         for(uint256 i=0; i<numberOfTokens; i++){
-            require(checkAirdrop(wallets[i]) == false, "One of the address already processed");
-            airdropDone[wallets[i]] = true;
+            airdropDone[wallets[i]] +=1 ;
             uint mintIndex = totalSupply().add(1);
             if (totalSupply() < MAX_COLLECTION) {
                 _safeMint(wallets[i], mintIndex);
